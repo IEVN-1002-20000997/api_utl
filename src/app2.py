@@ -65,6 +65,38 @@ def registrar_alumno():
              
     except Exception as ex:
             return jsonify({'mensaje':'error de conexion{}'.format(ex)})  
+    
+@app.route('/alumnos/<mat>',methods=['PUT'])
+def modificar_alumno(mat):
+    try:
+        alumno=leer_alumno_bd(mat)
+        if alumno !=None:
+            cursor=con.connection.cursor()
+            sql=""" UPDATE alumnos SET nombre='{0}', apaterno='{1}', amaterno='{2}', correo='{3}' where matricula={4}""".format(request.json['nombre'],request.json['apaterno'],request.json['amaterno'],request.json['correo'],mat)
+            cursor.execute(sql)
+            con.connection.commit()
+            return jsonify({'mensaje':'Alumno Actualizado','exito':True})
+        else:
+            return jsonify({'mensaje':'Alumno no encontrado','exito':False})
+
+    except Exception as ex:
+            return jsonify({'mensaje':'error de conexion{}'.format(ex)})  
+
+@app.route('/alumnos/<mat>',methods=['DELETE'])
+def eliminar_alumno(mat):
+    try:
+        alumno=leer_alumno_bd(mat)
+        if alumno !=None:
+            cursor=con.connection.cursor()
+            sql="""DELETE FROM alumnos WHERE matricula={0}""".format(mat)
+            cursor.execute(sql)
+            con.connection.commit()
+            return jsonify({'mensaje':'Alumno Eliminado','exito':True})
+        else:
+            return jsonify({'mensaje':'Alumno no encontrado','exito':False})
+
+    except Exception as ex:
+            return jsonify({'mensaje':'error de conexion{}'.format(ex)})  
 
 def pagina_no_encontrada(error):
     return "<h1> pagina no encontrada ... </h1>",404
